@@ -19,12 +19,9 @@ app.use((req, res, next)=>{
     
     if(authorizationHeader != null){
         const token = authorizationHeader.replace("Bearer ", "")
-        console.log(token)
 
         jwt.verify(token, "secretKey96$2025", (error, content)=>{
             if(content == null){
-                console.log("Invalid token")
-
                 res.json({
                     message: "Invalid token"
                 })
