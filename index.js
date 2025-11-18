@@ -1,18 +1,24 @@
- import express from 'express'
+import express from 'express'
 import mongoose from 'mongoose'
 import userRouter from './Routes/userRouter.js'
 import jwt from "jsonwebtoken"
 import productRouter from './Routes/productRouter.js'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import orderRouter from './Routes/orderRouter.js'
 
 dotenv.config()
 
 const mongoURI = process.env.MONGO_URI
 
-mongoose.connect(mongoURI).then(()=>{
-    console.log("Connected to MongoDB cluster")
-})
+mongoose.connect(mongoURI)
+    .then(()=>{
+        console.log("Connected to MongoDB cluster")
+    })
+    .catch((error)=>{
+        console.log("MongoDB connection failed...")
+        console.log(error)
+    })
 
 const app = express()
 
@@ -28,9 +34,11 @@ app.use((req, res, next)=>{
 
         jwt.verify(token, process.env.JWT_SECRET, (error, content)=>{
             if(content == null){
-                res.json({
+                res.status(401).json({
                     message: "Invalid token"
+                    
                 })
+                return
             }else{                
                 req.user = content
                 
@@ -44,6 +52,7 @@ app.use((req, res, next)=>{
 
 app.use("/api/users", userRouter)
 app.use("/api/products", productRouter)
+app.use("/api/orders", orderRouter)
 
 app.listen(5000, ()=>{
     console.log("Server is running...")

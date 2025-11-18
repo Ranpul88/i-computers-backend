@@ -41,7 +41,7 @@ export function getAllProducts(req, res){
                     res.json(products)
                 })
                 .catch((error)=>{
-                    req.status(500).json({
+                    res.status(500).json({
                         message: "Error fetching data",
                         error: error.message
                     })
@@ -52,7 +52,7 @@ export function getAllProducts(req, res){
                     res.json(products)
                 })
                 .catch((error)=>{
-                    req.status(500).json({
+                    res.status(500).json({
                         message: "Error fetching data",
                         error: error.message
                     })
@@ -86,13 +86,13 @@ export function deleteProduct(req, res){
                 })
             })
             .catch((error)=>{
-                req.status(500).json({
+                res.status(500).json({
                     message: "Error deleting product",
                     error: error.message
                 })
             })    
     } catch(error){
-        req.status(500).json({
+        res.status(500).json({
             message: "Error deleting product",
             error: error.message
         })
@@ -106,6 +106,7 @@ export function updateProduct(req, res){
             res.status(403).json({
                 message: "Only admin can update products."
             })
+            return
         }
 
         const productID = req.params.productID
@@ -133,7 +134,7 @@ export function updateProduct(req, res){
 
 export function getProductByID(req, res){
     try {
-        const productID = req. params.productID
+        const productID = req.params.productID
 
         Product.findOne({productID: productID})
             .then((product)=>{

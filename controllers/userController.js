@@ -25,6 +25,12 @@ export function createUser(req, res){
                 }
             )
         })
+        .catch((error)=>{
+            res.status(500).json({
+                message: "Error creating user",
+                error: error.message
+            })
+        })
 }
 
 export function loginUser(req, res){
@@ -34,7 +40,7 @@ export function loginUser(req, res){
     User.find({ email: email })
         .then((users)=>{
             if(users[0] == null){
-                res.json({
+                res.status(404).json({
                     message : "User not found."
                 })
             }else{
