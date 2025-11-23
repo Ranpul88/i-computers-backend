@@ -24,7 +24,7 @@ const orderSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        time: {
+        date: {
             type: Date,
             required: true,
             default: Date.now
