@@ -87,3 +87,13 @@ export function isAdmin(req){
 
     return true
 }
+
+export function getUser(req, res){
+    if(req.user == null){
+        return res.status(401).json({
+            message: "Unauhorized"
+        })
+    }
+
+    res.json(req.user)  
+}
