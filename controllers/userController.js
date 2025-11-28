@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import dotenv from "dotenv"
+import axios from "axios";
 
 dotenv.config()
 
@@ -15,18 +16,17 @@ export function createUser(req, res){
         firstName: data.firstName,
         lastName: data.lastName,
         password: hashedPassword,
-        role: data.role
     })
     user.save()
         .then(()=>{
-            res.json(
+            return res.json(
                 {
                     message: "user created successfully"
                 }
             )
         })
         .catch((error)=>{
-            res.status(500).json({
+            return res.status(500).json({
                 message: "Error creating user",
                 error: error.message
             })
@@ -40,7 +40,7 @@ export function loginUser(req, res){
     User.find({ email: email })
         .then((users)=>{
             if(users[0] == null){
-                res.status(404).json({
+                return res.status(404).json({
                     message : "User not found."
                 })
             }else{
@@ -62,18 +62,82 @@ export function loginUser(req, res){
                         expiresIn: "150h"
                     })
 
-                    res.json({
+                    return res.json({
                         message: "Login successful.",
                         token: token,
                         role: user.role
                     })
                 }else{
-                    res.status(401).json({
+                    return res.status(401).json({
                         message: "Invalid password."
                     })
                 }
             }
         })
+}
+
+export async function googleLogin(req, res){
+    try {
+        const res = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
+            headers: {
+                Authorization: `Bearer ${req.body.token}`
+            }
+        })
+
+        const user = await User.findOne({ email: res.data.email })
+
+        if(user == null){
+            const user = new User({
+                email: res.data.email,
+                firstName: res.data.given_name,
+                lastName: res.data.family_name,
+                password: "123",
+                image: res.data.picture
+            })
+
+            await user.save()
+             const payload = {
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                role: user.role,
+                isEmailVerified: true,
+                image: user.image
+             }
+
+             const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: "150h"})
+
+             res.json({
+                message: "Login successfull",
+                token: token,
+                role: user.role
+             })
+        }else{
+            const payload = {
+                        email: user.email,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        role: user.role,
+                        isEmailVerified: user.isEmailVerified,
+                        image: user.image
+                    }
+
+                    const token = jwt.sign(payload, process.env.JWT_SECRET,{
+                        expiresIn: "150h"
+                    })
+
+                    return res.json({
+                        message: "Login successful.",
+                        token: token,
+                        role: user.role
+                    })
+        }
+    }catch(err){
+        return res.status(500).json({
+            message: "Google login failed",
+            error: err.message
+        })
+    }
 }
 
 export function isAdmin(req){
