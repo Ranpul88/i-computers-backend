@@ -1,10 +1,23 @@
-import User from "../models/User.js";
+import User from "../models/User.js"
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import dotenv from "dotenv"
-import axios from "axios";
+import axios from "axios"
+import nodemailer from "nodemailer"
+import Otp from "../models/OTP.js"
 
 dotenv.config()
+
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+        user: "vinujavithanage88@gmail.com",
+        pass: process.env.GMAIL_APP_PASSWORD
+    }
+})
 
 export function createUser(req, res){
     const data = req.body
@@ -78,21 +91,21 @@ export function loginUser(req, res){
 
 export async function googleLogin(req, res){
     try {
-        const res = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
+        const response = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
             headers: {
                 Authorization: `Bearer ${req.body.token}`
             }
         })
 
-        const user = await User.findOne({ email: res.data.email })
+        const user = await User.findOne({ email: response.data.email })
 
         if(user == null){
             const user = new User({
-                email: res.data.email,
-                firstName: res.data.given_name,
-                lastName: res.data.family_name,
+                email: response.data.email,
+                firstName: response.data.given_name,
+                lastName: response.data.family_name,
                 password: "123",
-                image: res.data.picture
+                image: response.data.picture
             })
 
             await user.save()
@@ -136,6 +149,94 @@ export async function googleLogin(req, res){
         return res.status(500).json({
             message: "Google login failed",
             error: err.message
+        })
+    }
+}
+
+export async function sendOTP(req,res){
+    
+    try {
+        const email = req.params.email
+
+    const user = await User.findOne({ email:email })
+
+    if(user == null){
+        return res.status(404).json({
+            message: "user not found"
+        })
+    }
+
+    await Otp.deleteMany({ email:email })
+
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString()
+
+    const otp = new Otp({
+        email: email,
+        otp: otpCode
+    })
+
+    await otp.save()
+
+    const message = {
+        from: "vinujavithanage88@gmail.com",
+        to: email,
+        subject: "Your OTP Code",
+        text: "Your OTP code " + otpCode
+    }
+
+    transporter.sendMail(message, (err, info)=>{
+        if(err){
+            return res.status(500).json({
+                message: "Failed to send OTP",
+                error: err.message
+            })
+        }else{
+            res.json({
+                message: "OTP sent successfully"
+            })
+        }
+    })    
+    }catch(error){
+        res.status(500).json({
+            message: "Failed to sent OTP",
+            error: error.message
+        })
+    }
+    
+}
+
+export async function updatePassword(req, res){
+    try {
+        const {otp, newPassword, email} = req.body
+
+        const otpRecord = await Otp.findOne({ email:email, otp:otp })
+
+        if(otpRecord == null){
+            return res.status(400).json({
+                message: "Invalid OTP"
+            })
+        }
+
+        await Otp.deleteMany({ email:email })
+
+        const hashedPassword = bcrypt.hashSync(newPassword, 10)
+
+        await User.updateOne({ email:email }, { $set: { password:hashedPassword, isEmailVerified:true } })
+            .then(()=>{
+                res.json({
+                    message: "Password updated successfully"
+                })
+            })
+            .catch((err)=>{
+                res.status(500).json({
+                message: "Failed to fetch user",
+                error: error.message
+            })
+            })
+    }catch(error){
+        res.status(500).json({
+            message: "Failed to update password",
+            error: error.message
         })
     }
 }
