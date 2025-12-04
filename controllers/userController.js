@@ -59,6 +59,12 @@ export function loginUser(req, res){
             }else{
                 const user = users[0]
 
+                if(user.isBlocked){
+                    return res.status(403).json({
+                        message: "User a is blocked. Contact an admin."
+                    })
+                }
+
                 const isPasswordCorrect = bcrypt.compareSync(password, user.password)
                 
                 if(isPasswordCorrect){
@@ -126,6 +132,12 @@ export async function googleLogin(req, res){
                 role: user.role
              })
         }else{
+            if(user.isBlocked){
+                return res.status(403).json({
+                    message: "User is blocked. Contact an admin."
+                })
+            }
+
             const payload = {
                         email: user.email,
                         firstName: user.firstName,
@@ -261,4 +273,53 @@ export function getUser(req, res){
     }
 
     res.json(req.user)  
+}
+
+export async function getAllUsers(req, res){
+    if(!isAdmin(req)){
+        return res.status(401).json({
+            message: "Unauthorized"
+        })
+    }
+
+    try {
+        const users = await User.find()
+        res.json(users)
+
+    }catch(error){
+        res.status(500).json({
+            message: "Error fetching user",
+            error: error.message
+        })
+    }
+}
+
+export async function updateUserStatus(req, res){
+    if(!isAdmin(req)){
+        return res.status(401).json({
+            message: "Unauthorized"
+        })
+    }
+
+    const email = req.params.email
+
+    if(req.user.email == email){
+        return res.status(400).json({
+            message: "Admins cannot change their own status"
+        })
+    }
+
+    const isBlocked = req.body.isBlocked
+
+    try {
+        await User.updateOne({ email: email }, { $set: { isBlocked: isBlocked } })
+        res.json({
+            message: "User status updated successfully"
+        })   
+    }catch(error){
+        res.status(500).json({
+            message: "Error updating user status",
+            error: error.message
+        })
+    }
 }
