@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const OtpSchema = mongoose.Schema({
+const OtpSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
@@ -15,4 +15,4 @@ const OtpSchema = mongoose.Schema({
 
 const Otp = mongoose.model("Otp", OtpSchema)
 
-export default Otp
+export default Otp 
