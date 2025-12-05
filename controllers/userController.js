@@ -1,10 +1,10 @@
 import User from "../models/User.js"
+import Otp from "../models/Otp.js"
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import dotenv from "dotenv"
 import axios from "axios"
 import nodemailer from "nodemailer"
-import Otp from "../models/OTP.js"
 
 dotenv.config()
 
