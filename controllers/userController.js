@@ -242,7 +242,7 @@ export async function updatePassword(req, res){
             .catch((err)=>{
                 res.status(500).json({
                 message: "Failed to fetch user",
-                error: error.message
+                error: err.message
             })
             })
     }catch(error){
@@ -321,5 +321,45 @@ export async function updateUserStatus(req, res){
             message: "Error updating user status",
             error: error.message
         })
+    }
+}
+
+export async function sendMail(req, res){
+    const {email, name, text} = req.body
+
+    try {
+        const user = await User.find({email:email})
+        
+        if(user == null){
+            return res.status(404).json({
+                message: "User not found"
+            })
+        }
+
+        const message = {
+        from: email,
+        to: "vinujavithanage88@gmail.com",
+        subject: name,
+        text: text
+    }
+
+    transporter.sendMail(message, (err, info)=>{
+        if(err){
+            return res.status(500).json({
+                message: "Failed to send Email",
+                error: err.message
+            })
+        }else{
+            res.json({
+                message: "Email send successfully"
+            })
+        }
+    })
+
+    }catch(error){
+        res.status(500).json({
+            message: "Failed to send Email",
+            error: error.message
+        })    
     }
 }
