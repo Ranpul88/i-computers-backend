@@ -172,7 +172,7 @@ export async function sendOTP(req,res){
 
     const user = await User.findOne({ email:email })
 
-    if(user == null){
+    if(user==null){
         return res.status(404).json({
             message: "user not found"
         })
@@ -328,19 +328,24 @@ export async function sendMail(req, res){
     const {email, name, text} = req.body
 
     try {
-        const user = await User.find({email:email})
+        // const user = await User.find({email:email})
         
-        if(user == null){
-            return res.status(404).json({
-                message: "User not found"
-            })
-        }
+        // if(user == null){
+        //     return res.status(404).json({
+        //         message: "User not found"
+        //     })
+        // }
 
         const message = {
-        from: email,
+        // from: email,
+        // to: "vinujavithanage88@gmail.com",
+        // subject: name,
+        // text: text
+        from: `"Customer Message" <vinujavithanage88@gmail.com>`,
         to: "vinujavithanage88@gmail.com",
-        subject: name,
-        text: text
+        subject: `New Contact Form Message from ${name}`,
+        text: `Sender Email: ${email}\n\nMessage:\n${text}`,
+        replyTo: email
     }
 
     transporter.sendMail(message, (err, info)=>{
