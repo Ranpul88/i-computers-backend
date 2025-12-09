@@ -1,15 +1,16 @@
 import express from 'express'
 import mongoose from 'mongoose'
-import userRouter from './Routes/userRouter.js'
 import jwt from "jsonwebtoken"
 import productRouter from './Routes/productRouter.js'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import orderRouter from './Routes/orderRouter.js'
-
+import userRouter from './Routes/userRouter.js'
 dotenv.config()
 
 const mongoURI = process.env.MONGO_URI
+
+// console.log(userRouter)
 
 mongoose.connect(mongoURI)
     .then(()=>{
