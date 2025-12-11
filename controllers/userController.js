@@ -330,25 +330,12 @@ export async function sendMail(req, res){
     console.log(req.body)
 
     try {
-        // const user = await User.find({email:email})
-        
-        // if(user == null){
-        //     return res.status(404).json({
-        //         message: "User not found"
-        //     })
-        // }
-
-        const message = {
+         const message = {
         from: "vinujavithanage88@gmail.com",
         to: "vinujavithanage88@gmail.com",
         subject: `Email from ${name} ${email}`,
         text: text,
         replyTo: email
-        // from: `"Customer Message" <vinujavithanage88@gmail.com>`,
-        // to: "vinujavithanage88@gmail.com",
-        // subject: `New Contact Form Message from ${name}`,
-        // text: `Sender Email: ${email}\n\nMessage:\n${text}`,
-        // replyTo: email
     }
 
     transporter.sendMail(message, (err, info)=>{
