@@ -340,7 +340,8 @@ export async function sendMail(req, res){
         from: "vinujavithanage88@gmail.com",
         to: "vinujavithanage88@gmail.com",
         subject: `Email from ${name} ${email}`,
-        text: text
+        text: text,
+        replyTo: email
         // from: `"Customer Message" <vinujavithanage88@gmail.com>`,
         // to: "vinujavithanage88@gmail.com",
         // subject: `New Contact Form Message from ${name}`,

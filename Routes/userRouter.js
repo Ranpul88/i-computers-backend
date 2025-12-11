@@ -9,7 +9,7 @@ userRouter.get('/', getUser)
 userRouter.post('/google-login', googleLogin)
 userRouter.get('/send-otp/:email', sendOTP)
 userRouter.post('/validate-otp', updatePassword)
-userRouter.post('/contact/send-mail', sendMail)
+userRouter.post('/contact', sendMail)
 userRouter.get('/all', getAllUsers)
 userRouter.put('/toggle-block/:email', updateUserStatus)
 
