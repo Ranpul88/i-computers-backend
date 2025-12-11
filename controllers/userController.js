@@ -327,6 +327,8 @@ export async function updateUserStatus(req, res){
 export async function sendMail(req, res){
     const {email, name, text} = req.body
 
+    console.log(req)
+
     try {
         // const user = await User.find({email:email})
         
