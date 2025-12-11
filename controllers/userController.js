@@ -337,15 +337,15 @@ export async function sendMail(req, res){
         // }
 
         const message = {
-        // from: email,
-        // to: "vinujavithanage88@gmail.com",
-        // subject: name,
-        // text: text
-        from: `"Customer Message" <vinujavithanage88@gmail.com>`,
+        from: "vinujavithanage88@gmail.com",
         to: "vinujavithanage88@gmail.com",
-        subject: `New Contact Form Message from ${name}`,
-        text: `Sender Email: ${email}\n\nMessage:\n${text}`,
-        replyTo: email
+        subject: `Email from ${name} ${email}`,
+        text: text
+        // from: `"Customer Message" <vinujavithanage88@gmail.com>`,
+        // to: "vinujavithanage88@gmail.com",
+        // subject: `New Contact Form Message from ${name}`,
+        // text: `Sender Email: ${email}\n\nMessage:\n${text}`,
+        // replyTo: email
     }
 
     transporter.sendMail(message, (err, info)=>{
