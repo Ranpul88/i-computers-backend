@@ -332,8 +332,8 @@ export async function sendMail(req, res){
     try {
          const message = {
         from: "vinujavithanage88@gmail.com",
-        to: "vinujavithanage88@gmail.com",
-        subject: `Email from ${name} ${email}`,
+        to: "vithanagevinuja@gmail.com", // methana same mail nisada danne nah podk wena mail ekk dala try krla blamuda
+        subject: `Email from ${name} (${email})`, //github ekata push karannada??
         text: text,
         replyTo: email
     }
