@@ -331,8 +331,6 @@ export async function updateUserStatus(req, res){
 export async function sendMail(req, res){
     const {email, name, text} = req.body
 
-    console.log(req.body)
-
     try {
          const message = {
         from: "vinujavithanage88@gmail.com",
@@ -354,19 +352,6 @@ export async function sendMail(req, res){
                 error: error.message
             })
         })
-
-    // transporter.sendMail(message, (err, info)=>{
-    //     if(err){
-    //         return res.status(500).json({
-    //             message: "Failed to send Email",
-    //             error: err.message
-    //         })
-    //     }else{
-    //         res.json({
-    //             message: "Email send successfully"
-    //         })
-    //     }
-    // })
 
     }catch(error){
         res.status(500).json({
