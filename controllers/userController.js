@@ -194,24 +194,24 @@ export async function sendOTP(req,res){
     await otp.save()
 
     const message = {
-        from: "vinujavithanage88@gmail.com",
+        from: process.env.EMAIL_FROM,
         to: email,
         subject: "Your OTP Code",
         text: "Your OTP code " + otpCode
     }
 
-    transporter.sendMail(message, (err, info)=>{
-        if(err){
-            return res.status(500).json({
-                message: "Failed to send OTP",
-                error: err.message
-            })
-        }else{
+    await sgMail.send(message)
+        .then(()=>{
             res.json({
-                message: "OTP sent successfully"
+                message: "Email send successfully"
             })
-        }
-    })    
+        })
+        .catch((error)=>{
+            res.status(500).json({
+                message: "Failed to send Email",
+                error: error.message
+            })
+        })
     }catch(error){
         res.status(500).json({
             message: "Failed to sent OTP",
@@ -333,8 +333,8 @@ export async function sendMail(req, res){
 
     try {
          const message = {
-        from: "vinujavithanage88@gmail.com",
-        to: "vinujavithanage88@gmail.com",
+        from: process.env.EMAIL_FROM,
+        to: process.env.EMAIL_FROM,
         subject: `Email from ${name} (${email})`,
         text: text,
         replyTo: email
