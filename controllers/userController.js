@@ -5,8 +5,12 @@ import jwt from 'jsonwebtoken'
 import dotenv from "dotenv"
 import axios from "axios"
 import nodemailer from "nodemailer"
+import sgMail from "@sendgrid/mail";
+
 
 dotenv.config()
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -332,24 +336,37 @@ export async function sendMail(req, res){
     try {
          const message = {
         from: "vinujavithanage88@gmail.com",
-        to: "vithanagevinuja@gmail.com", // methana same mail nisada danne nah podk wena mail ekk dala try krla blamuda
-        subject: `Email from ${name} (${email})`, //github ekata push karannada??
+        to: "vinujavithanage88@gmail.com",
+        subject: `Email from ${name} (${email})`,
         text: text,
         replyTo: email
     }
 
-    transporter.sendMail(message, (err, info)=>{
-        if(err){
-            return res.status(500).json({
-                message: "Failed to send Email",
-                error: err.message
-            })
-        }else{
+    await sgMail.send(message)
+        .then(()=>{
             res.json({
                 message: "Email send successfully"
             })
-        }
-    })
+        })
+        .catch((error)=>{
+            res.status(500).json({
+                message: "Failed to send Email",
+                error: error.message
+            })
+        })
+
+    // transporter.sendMail(message, (err, info)=>{
+    //     if(err){
+    //         return res.status(500).json({
+    //             message: "Failed to send Email",
+    //             error: err.message
+    //         })
+    //     }else{
+    //         res.json({
+    //             message: "Email send successfully"
+    //         })
+    //     }
+    // })
 
     }catch(error){
         res.status(500).json({
