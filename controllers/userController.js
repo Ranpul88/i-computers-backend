@@ -201,17 +201,9 @@ export async function sendOTP(req,res){
     }
 
     await sgMail.send(message)
-        .then(()=>{
-            res.json({
-                message: "Email send successfully"
-            })
-        })
-        .catch((error)=>{
-            res.status(500).json({
-                message: "Failed to send Email",
-                error: error.message
-            })
-        })
+    res.json({
+        message: "Email send successfully"
+    })
     }catch(error){
         res.status(500).json({
             message: "Failed to sent OTP",
@@ -344,7 +336,7 @@ export async function sendMail(req, res){
     res.json({
         message: "Email send successfully"
     })
-    
+
     }catch(error){
         res.status(500).json({
             message: "Failed to send Email",
