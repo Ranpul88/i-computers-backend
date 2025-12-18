@@ -191,3 +191,73 @@ export async function searchProduct(req, res){
         })
     }
 }
+
+export async function updateRatings(req, res){
+    if(req.user == null){
+        return res.status(401).json({
+            message: "Unauthorized"
+        })
+    }
+
+    try {
+        const productID = req.params.productID
+        const {stars, name, message} = req.body
+
+        const lastReview = await Product.findOne({ productID: productID })
+
+        let ratings = 1
+        let fiveStar = 0
+        let fourStar = 0
+        let threeStar = 0
+        let twoStar = 0
+        let oneStar = 0
+
+        if(lastReview != null){
+            noOfRatings = lastReview.noOfRatings + 1
+            fiveStar = lastReview.fiveStar
+            fourStar = lastReview.fourStar
+            threeStar = lastReview.threeStar
+            twoStar = lastReview.twoStar
+            oneStar = lastReview.oneStar
+        }
+
+        if(stars == 5){
+            fiveStar += 1
+        }else if(stars == 4){
+            fourStar += 1
+        }else if(stars == 3){
+            threeStar += 1
+        }else if(stars == 2){
+            twoStar += 1
+        }else{
+            oneStar += 1
+        }
+
+        const totalStars = (5 * fiveStar) + (4 * fourStar) + (3 * threeStar) + (2 * twoStar) + (oneStar)
+        const averageStars = totalStars/noOfRatings
+
+        await Product.updateOne({ productID: productID }, 
+            {
+                $set: {
+                    "ratings.noOfRatings": noOfRatings,
+                    "ratings.stars": averageStars,
+                    "ratings.fiveStar": fiveStar,
+                    "ratings.fourStar": fourStar,
+                    "ratings.threeStar": threeStar,
+                    "ratings.twoStar": twoStar,
+                    "ratings.oneStar": oneStar
+                }
+            }
+        )
+
+        return res.json({
+            message: "Review created successfully"
+        })
+
+    }catch(error){
+        res.status(500).json({
+            message: "Error creating review.",
+            error: error.message
+        })
+    }
+}

@@ -6,11 +6,10 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import orderRouter from './Routes/orderRouter.js'
 import userRouter from './Routes/userRouter.js'
+// import reviewRouter from './Routes/reviewRouter.js'
 dotenv.config()
 
 const mongoURI = process.env.MONGO_URI
-
-// console.log(userRouter)
 
 mongoose.connect(mongoURI)
     .then(()=>{
@@ -57,6 +56,7 @@ app.use((req, res, next)=>{
 app.use("/api/users", userRouter)
 app.use("/api/products", productRouter)
 app.use("/api/orders", orderRouter)
+// app.use("/api/reviews", reviewRouter)
 
 app.listen(5000, ()=>{
     console.log("Server is running...")

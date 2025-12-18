@@ -9,5 +9,6 @@ productRouter.get('/search/:query', searchProduct)
 productRouter.get('/:productID', getProductByID)
 productRouter.delete('/:productID', deleteProduct)
 productRouter.put('/:productID', updateProduct)
+productRouter.put('/ratings/:productID', updateProduct)
 
 export default productRouter

@@ -59,6 +59,42 @@ const productSchema = new mongoose.Schema({
         default: 0
     },
 
+    ratings: {
+            noOfRatings: {
+            type: Number,
+            default: 0
+        },
+
+        stars: {
+            type: Number,
+            required: true,
+            default: 0
+        },
+
+        fiveStar: {
+            type: Number,
+            default: 0
+        },
+
+        fourStar: {
+            type: Number,
+            default: 0
+        },
+
+        threeStar: {
+            type: Number,
+            default: 0
+        },
+        twoStar: {
+            type: Number,
+            default: 0
+        },
+        oneStar: {
+            type: Number,
+            default: 0
+        },
+    },
+
     isAvailable: {
         type: Boolean,
         default: true
