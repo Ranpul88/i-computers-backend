@@ -6,6 +6,11 @@ const reviewSchema = new mongoose.Schema({
         required: true
     },
 
+    stars: {
+        type: Number,
+        required: true
+    },
+
     name: {
         type: String
     },
