@@ -1,3 +1,4 @@
+import Order from "../models/Order.js";
 import Product from "../models/product.js";
 import { isAdmin } from "./userController.js";
 
@@ -200,12 +201,21 @@ export async function updateRatings(req, res){
     }
 
     try {
+        const email = req.user.email
         const productID = req.params.productID
-        const {stars, name, message} = req.body
+        const stars = req.body
+
+        const orderStatus = await Order.find({ email: email, status: "completed", "items.productID": productID })
+
+        if(orderStatus == null){
+            return res.status(401).json({
+                message: "Unauthorized"
+            })
+        }
 
         const lastReview = await Product.findOne({ productID: productID })
 
-        let ratings = 1
+        let noOfRatings = 1
         let fiveStar = 0
         let fourStar = 0
         let threeStar = 0
@@ -240,7 +250,7 @@ export async function updateRatings(req, res){
             {
                 $set: {
                     "ratings.noOfRatings": noOfRatings,
-                    "ratings.stars": averageStars,
+                    "ratings.stars": parseFloat(averageStars.toFixed(1)),
                     "ratings.fiveStar": fiveStar,
                     "ratings.fourStar": fourStar,
                     "ratings.threeStar": threeStar,
