@@ -203,7 +203,7 @@ export async function updateRatings(req, res){
     try {
         const email = req.user.email
         const productID = req.params.productID
-        const stars = req.body
+        const stars = req.body.stars
 
         const orderStatus = await Order.find({ email: email, status: "completed", "items.productID": productID })
 
