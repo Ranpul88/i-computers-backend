@@ -222,13 +222,13 @@ export async function updateRatings(req, res){
         let twoStar = 0
         let oneStar = 0
 
-        if(lastReview != null){
-            noOfRatings = lastReview.noOfRatings + 1
-            fiveStar = lastReview.fiveStar
-            fourStar = lastReview.fourStar
-            threeStar = lastReview.threeStar
-            twoStar = lastReview.twoStar
-            oneStar = lastReview.oneStar
+        if(lastReview.ratings != null){
+            noOfRatings = lastReview.ratings.noOfRatings + 1
+            fiveStar = lastReview.ratings.fiveStar
+            fourStar = lastReview.ratings.fourStar
+            threeStar = lastReview.ratings.threeStar
+            twoStar = lastReview.ratings.twoStar
+            oneStar = lastReview.ratings.oneStar
         }
 
         if(stars == 5){
