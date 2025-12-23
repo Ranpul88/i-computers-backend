@@ -60,12 +60,17 @@ const productSchema = new mongoose.Schema({
     },
 
     ratings: {
-            noOfRatings: {
+        noOfRatings: {
             type: Number,
             default: 0
         },
 
         stars: {
+            type: Number,
+            required: true,
+            default: 0
+        },
+        averageStars: {
             type: Number,
             required: true,
             default: 0

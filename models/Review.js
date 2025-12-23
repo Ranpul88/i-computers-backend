@@ -18,7 +18,8 @@ const reviewSchema = new mongoose.Schema({
 
     name: {
         type: String,
-        required: true
+        required: true,
+        default: "Anonymous"
     },
 
     message: {

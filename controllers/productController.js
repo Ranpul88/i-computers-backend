@@ -1,4 +1,3 @@
-import Order from "../models/Order.js";
 import Product from "../models/product.js";
 import { isAdmin } from "./userController.js";
 
@@ -205,23 +204,7 @@ export async function updateRatings(req, res){
         const productID = req.params.productID
         const stars = req.body.stars
 
-        console.log("Email:", email)
-        console.log("ProductID:", productID)
-        console.log("Stars:", stars)
-
-        const orderStatus = await Order.find({ email: email, status: "completed", "items.productID": productID })
-
-        console.log("Orders found:", orderStatus)
-
-        if(orderStatus == null){
-            return res.status(401).json({
-                message: "Unauthorized"
-            })
-        }
-
         const lastReview = await Product.findOne({ productID: productID })
-
-        console.log("Current product:", lastReview)
 
         let noOfRatings = 1
         let fiveStar = 0
@@ -254,13 +237,12 @@ export async function updateRatings(req, res){
         const totalStars = (5 * fiveStar) + (4 * fourStar) + (3 * threeStar) + (2 * twoStar) + (oneStar)
         const averageStars = totalStars/noOfRatings
 
-        console.log("New average:", averageStars)
-
         await Product.updateOne({ productID: productID }, 
             {
                 $set: {
                     "ratings.noOfRatings": noOfRatings,
-                    "ratings.stars": parseFloat(averageStars.toFixed(1)),
+                    "ratings.stars": totalStars,
+                    "ratings.averageStars": parseFloat(averageStars.toFixed(1)),
                     "ratings.fiveStar": fiveStar,
                     "ratings.fourStar": fourStar,
                     "ratings.threeStar": threeStar,
