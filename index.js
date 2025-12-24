@@ -58,6 +58,6 @@ app.use("/api/products", productRouter)
 app.use("/api/orders", orderRouter)
 app.use("/api/reviews", reviewRouter)
 
-app.listen(5000, ()=>{
+app.listen(process.env.PORT, ()=>{
     console.log("Server is running...")
 })
